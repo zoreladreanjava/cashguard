@@ -1,0 +1,91 @@
+CREATE TABLE IF NOT EXISTS tbluser (
+    uid INT AUTO_INCREMENT PRIMARY KEY,
+    firstname VARCHAR(50) NOT NULL,
+    lastname VARCHAR(50) NOT NULL,
+    gender VARCHAR(10),
+    usertype VARCHAR(20),
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL, -- For hashed passwords
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tblstudent (
+    sid INT AUTO_INCREMENT PRIMARY KEY,
+    program VARCHAR(20),
+    yearlevel INT,
+    uid INT,
+    FOREIGN KEY (uid) REFERENCES tbluser(uid)
+);
+
+-- Drop the existing foreign key constraint
+ALTER TABLE tblstudent DROP FOREIGN KEY tblstudent_ibfk_1;
+
+-- Recreate it with CASCADE delete
+ALTER TABLE tblstudent 
+ADD CONSTRAINT tblstudent_ibfk_1 
+FOREIGN KEY (uid) REFERENCES tbluser(uid) 
+ON DELETE CASCADE;
+
+///////////////////////////////////////////////////
+
+CREATE TABLE tbluser (
+    uid INT AUTO_INCREMENT PRIMARY KEY,
+    firstname VARCHAR(50),
+    lastname VARCHAR(50),
+    gender VARCHAR(10),
+    usertype VARCHAR(20),
+    username VARCHAR(50),
+    password VARCHAR(255)
+);
+
+CREATE TABLE tblstudent (
+    sid INT AUTO_INCREMENT PRIMARY KEY,
+    program VARCHAR(20),
+    yearlevel INT,
+    uid INT
+);
+
+
+SELECT username, usertype FROM tbluser WHERE username = 'zoreladrean';
+UPDATE tbluser SET usertype = 'admin' WHERE username = 'zoreladrean';
+
+1. savings_goals Table
+This table tracks the savings goals set by users. Each goal has a name (e.g., "Vacation Fund"), a target amount, and a date when it is expected to be completed.
+
+CREATE TABLE savings_goals (
+    goal_id INT AUTO_INCREMENT PRIMARY KEY,
+    uid INT,  -- references tbluser
+    goal_name VARCHAR(255),
+    target_amount DECIMAL(10, 2),
+    amount_saved DECIMAL(10, 2) DEFAULT 0,  -- tracks how much has been saved so far
+    target_date DATE,  -- date the goal is expected to be reached
+    FOREIGN KEY (uid) REFERENCES tbluser(uid) ON DELETE CASCADE
+);
+
+2. expenses Table
+This table tracks the expenses for users. Expenses will be categorized (e.g., "Groceries", "Rent", "Utilities") and can include the date, description, and amount.
+
+CREATE TABLE expenses (
+    expense_id INT AUTO_INCREMENT PRIMARY KEY,
+    sid INT,  -- references tblstudent
+    expense_name VARCHAR(255),  -- Name/description of the expense (e.g., "Groceries")
+    category VARCHAR(100),  -- e.g., "Food", "Entertainment", etc.
+    amount DECIMAL(10, 2),  -- The amount spent
+    expense_date DATE,  -- Date the expense occurred
+    FOREIGN KEY (sid) REFERENCES tblstudent(sid) ON DELETE CASCADE
+);
+
+3. budgets Table
+This table will store the budget limit for users, either monthly or yearly. Users can set a limit for a specific period.
+
+CREATE TABLE budgets (
+    budget_id INT AUTO_INCREMENT PRIMARY KEY,
+    uid INT,  -- references tbluser
+    month INT,  -- month the budget applies to (1-12)
+    year INT,  -- year of the budget
+    total_budget DECIMAL(10, 2),  -- the total budget limit for the month or year
+    amount_spent DECIMAL(10, 2) DEFAULT 0,  -- tracks how much of the budget has been spent so far
+    FOREIGN KEY (uid) REFERENCES tbluser(uid) ON DELETE CASCADE
+);
+//////////////////////////////////////////////////////////////////////
+
