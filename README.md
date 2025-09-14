@@ -1,2 +1,2 @@
 # cashguard
-project management | information management project
+financial management system
