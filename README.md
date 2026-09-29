@@ -578,3 +578,7 @@ Other implementation details to be aware of:
   
 
 CashGuard is an educational project. Financial records entered into a local installation are stored in its configured MySQL database.
+
+## Project video
+
+Watch the CashGuard project walkthrough on [YouTube](https://www.youtube.com/watch?v=uZpJR1npV-A).
