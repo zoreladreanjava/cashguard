@@ -1,0 +1,101 @@
+erDiagram
+    USERS ||--o| STUDENT_PROFILES : "has"
+    USERS |o--o{ LOGIN_ATTEMPTS : "makes"
+    USERS |o--o{ CATEGORIES : "owns"
+    USERS ||--o{ EXPENSES : "records"
+    USERS ||--o{ INCOMES : "receives"
+    USERS ||--o{ BUDGETS : "plans"
+    USERS ||--o{ SAVINGS_GOALS : "sets"
+    CATEGORIES ||--o{ EXPENSES : "classifies"
+    CATEGORIES ||--o{ BUDGET_ALLOCATIONS : "is allotted in"
+    BUDGETS ||--o{ BUDGET_ALLOCATIONS : "is divided into"
+    SAVINGS_GOALS ||--o{ GOAL_CONTRIBUTIONS : "receives"
+
+    USERS {
+        serial user_id PK
+        varchar username UK "NOT NULL"
+        varchar password "NOT NULL (hashed)"
+        varchar first_name "NOT NULL"
+        varchar last_name "NOT NULL"
+        varchar gender "CHECK"
+        varchar account_type "CHECK"
+        boolean is_active
+        timestamp last_login
+        timestamp created_at
+    }
+    STUDENT_PROFILES {
+        serial profile_id PK
+        integer user_id FK,UK
+        varchar program "CHECK"
+        smallint year_level "CHECK 1-4"
+    }
+    LOGIN_ATTEMPTS {
+        serial attempt_id PK
+        integer user_id FK "NULL"
+        varchar username_entered
+        boolean was_successful
+        inet ip_address
+        timestamp attempted_at
+    }
+    CATEGORIES {
+        serial category_id PK
+        integer user_id FK "NULL = system"
+        varchar name "UK(user_id,name)"
+        varchar description
+        boolean is_active
+    }
+    EXPENSES {
+        serial expense_id PK
+        integer user_id FK
+        integer category_id FK
+        varchar description
+        numeric amount "CHECK > 0"
+        date expense_date
+        varchar payment_method "CHECK"
+        text notes
+        timestamp created_at
+        timestamp updated_at
+    }
+    INCOMES {
+        serial income_id PK
+        integer user_id FK
+        varchar source
+        varchar income_type "CHECK"
+        numeric amount "CHECK > 0"
+        date income_date
+        text notes
+        timestamp created_at
+    }
+    BUDGETS {
+        serial budget_id PK
+        integer user_id FK "UK(user,month,year)"
+        smallint budget_month "CHECK 1-12"
+        smallint budget_year "CHECK"
+        numeric total_amount "CHECK > 0"
+        timestamp created_at
+    }
+    BUDGET_ALLOCATIONS {
+        serial allocation_id PK
+        integer budget_id FK "UK(budget,category)"
+        integer category_id FK
+        numeric allocated_amount "CHECK > 0"
+    }
+    SAVINGS_GOALS {
+        serial goal_id PK
+        integer user_id FK "UK(user,goal_name)"
+        varchar goal_name
+        numeric target_amount "CHECK > 0"
+        date start_date
+        date target_date "CHECK > start_date"
+        varchar status "CHECK"
+        timestamp created_at
+    }
+    GOAL_CONTRIBUTIONS {
+        serial contribution_id PK
+        integer goal_id FK
+        varchar contribution_type "CHECK"
+        numeric amount "CHECK > 0"
+        date contribution_date
+        varchar notes
+        timestamp created_at
+    }
